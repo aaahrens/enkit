@@ -2,29 +2,59 @@ package machinist
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/enfabrica/enkit/lib/srand"
 	"github.com/enfabrica/enkit/lib/token"
 	machinist "github.com/enfabrica/enkit/machinist/rpc"
+	"math/rand"
 	"net"
 )
 
-func NewServer() *ServerRequest {
+func NewServerRequest() *ServerRequest {
 	return &ServerRequest{}
 }
 
 type Server struct {
 	Config  ServerFlagSet
 	Encoder token.BinaryEncoder
+	Req     *ServerRequest
 }
 
-func (m Server) Poll(server machinist.Controller_PollServer) error {
+func NewServer(req *ServerRequest) *Server {
+	return &Server{
+		Req: req,
+	}
+}
+func (s *Server) Start() {
+
+}
+
+func (s *Server) Stop() {
+
+}
+
+func (s Server) Poll(server machinist.Controller_PollServer) error {
+	request, err := server.Recv()
+	if err != nil {
+		return err
+	}
+	ping := request.GetPing()
+	fmt.Println(ping.Payload)
+	response := machinist.PollResponse{
+		Resp: &machinist.PollResponse_Pong{
+			Pong: &machinist.ActionPong{
+				Payload: []byte("hello world"),
+			},
+		},
+	}
+	return server.Send(&response)
+}
+
+func (s Server) Upload(server machinist.Controller_UploadServer) error {
 	panic("implement me")
 }
 
-func (m Server) Upload(server machinist.Controller_UploadServer) error {
-	panic("implement me")
-}
-
-func (m Server) Download(request *machinist.DownloadRequest, server machinist.Controller_DownloadServer) error {
+func (s Server) Download(request *machinist.DownloadRequest, server machinist.Controller_DownloadServer) error {
 	panic("implement me")
 }
 
@@ -33,7 +63,7 @@ type invitationToken struct {
 	Port      int
 }
 
-func (m Server) GenerateInvitation() ([]byte, error) {
+func (s Server) GenerateInvitation() ([]byte, error) {
 	nats, err := net.Interfaces()
 	if err != nil {
 		return nil, err
@@ -52,14 +82,14 @@ func (m Server) GenerateInvitation() ([]byte, error) {
 		}
 	}
 	i := invitationToken{
-		Port:      m.Config.Port,
+		Port:      s.Config.Port,
 		Addresses: attachedIpAddresses,
 	}
 	jsonString, err := json.Marshal(i)
 	if err != nil {
 		return nil, err
 	}
-	encodedToken, err := m.Encoder.Encode(jsonString)
+	encodedToken, err := s.Encoder.Encode(jsonString)
 	if err != nil {
 		return nil, err
 	}
@@ -80,6 +110,15 @@ func (rs ServerRequest) Start() (*Server, error) {
 	return &Server{}, nil
 }
 
-func (rs ServerRequest) UseEncoder(encoder token.BinaryEncoder) {
+func (rs *ServerRequest) UseEncoder(encoder token.BinaryEncoder) *ServerRequest {
+	en, err := token.NewSymmetricEncoder(rand.New(srand.Source))
+	if err != nil {
+		panic(err)
+	}
+	rs.Encoder = en
+	return rs
+}
+
+func (s *Server) Nodes() {
 
 }
