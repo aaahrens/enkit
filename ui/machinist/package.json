@@ -1,0 +1,11 @@
+{
+  "name": "machinist",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {},
+  "scripts": {
+    "start": "ibazel run //ui:machinist-start",
+    "build": "bazel build //ui:machinist-build",
+    "test": "ibazel test //ui:machinist-test"
+  }
+}

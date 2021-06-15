@@ -34,3 +34,26 @@ react_project(
         "//ui/ptunnel:yarn.lock",
     ],
 )
+
+
+react_project(
+    name = "machinist",
+    srcs = [
+        "//ui/machinist:srcs",
+    ],
+    package_jsons = [
+        "//ui:package.json",
+        "//ui/machinist:package.json",
+    ],
+    patches = [
+        "//ui:git-patches",
+    ],
+    publics = [
+        "//ui/machinist:public",
+    ],
+    tsconfig = "//ui/machinist:tsconfig.json",
+    visibility = ["//visibility:public"],
+    yarn_locks = [
+        "//ui/machinist:yarn.lock",
+    ],
+)
