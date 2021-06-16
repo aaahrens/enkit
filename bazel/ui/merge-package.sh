@@ -11,4 +11,4 @@ while [ "$1" != "" ]; do
   counter=$((counter+1))
   shift
 done
-echo "$(jq -s "$ss" "${args[@]}")"
+jq -s "$ss" "${args[@]}"

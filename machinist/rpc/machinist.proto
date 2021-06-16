@@ -69,3 +69,37 @@ service Controller {
   // The client will invoke Download when the server requests the client to upload a file.
   rpc Download(DownloadRequest) returns (stream DownloadResponse) {}
 }
+
+
+enum CommandType {
+  Update = 0;
+  UpdateAppend=1;
+  Delete =2;
+}
+
+enum CommandField {
+  Aliases = 0;
+  IpAddresses=1;
+  Tags=2;
+  Groups=3;
+}
+
+message CommandRequest {
+
+}
+
+message CommandResponse {
+}
+
+message MetricsRequest {
+
+}
+
+message MetricsResponse {
+
+}
+
+service Client {
+    rpc Command(CommandRequest) returns (CommandResponse) {}
+    rpc Metrics(stream MetricsRequest) returns (stream MetricsResponse){}
+}

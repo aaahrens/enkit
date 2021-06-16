@@ -35,7 +35,6 @@ react_project(
     ],
 )
 
-
 react_project(
     name = "machinist",
     srcs = [
@@ -54,6 +53,5 @@ react_project(
     tsconfig = "//ui/machinist:tsconfig.json",
     visibility = ["//visibility:public"],
     yarn_locks = [
-        "//ui/machinist:yarn.lock",
     ],
 )
